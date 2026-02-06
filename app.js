@@ -1478,19 +1478,19 @@ function getCreditsScreen() {
                 </div>
                 <div class="credits-block">
                     <p class="credits-label">Executive Producer</p>
-                    <p class="credits-name">Late nights & too much chai</p>
+                    <p class="credits-name">Late nights & too much coffee</p>
                 </div>
                 <div class="credits-block">
                     <p class="credits-label">Music</p>
-                    <p class="credits-name">The sound of two hearts beating</p>
+                    <p class="credits-name">Imagine Dragons</p>
                 </div>
                 <div class="credits-block">
                     <p class="credits-label">Special Thanks</p>
-                    <p class="credits-name">The internet, caffeine & butterflies in the stomach</p>
+                    <p class="credits-name">The internet and Claude Code</p>
                 </div>
                 <div class="credits-block">
                     <p class="credits-label">Catering</p>
-                    <p class="credits-name">Zomato (our real chef)</p>
+                    <p class="credits-name">Blinkit</p>
                 </div>
                 <div class="credits-block credits-disclaimer">
                     <p>No hearts were broken in the making of this app.</p>
