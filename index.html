@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Application</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
+    
+    <!-- PWA Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="The Application">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- For sharing preview -->
+    <meta property="og:title" content="The Application">
+    <meta property="og:description" content="No right answers. No judgment. No pressure.">
+    <meta name="theme-color" content="#1a1a2e">
+</head>
+<body>
+    <div id="app" class="app-container normal-mode">
+        <!-- Floating hearts (hidden until valentine mode) -->
+        <div id="floating-hearts" class="floating-hearts"></div>
+        
+        <!-- Transition overlay -->
+        <div id="transition-overlay" class="transition-overlay hidden">
+            <span class="transition-heart">♥</span>
+        </div>
+        
+        <!-- Main screen wrapper -->
+        <div id="screen-wrapper" class="screen-wrapper">
+            <!-- Screens will be injected here -->
+        </div>
+        
+        <!-- Easter egg modal -->
+        <div id="easter-egg" class="easter-egg-overlay hidden">
+            <div class="easter-egg-content">
+                <span class="egg-icon">🐣</span>
+                <p class="egg-title">Fun fact:</p>
+                <p class="egg-text">This took longer than expected.</p>
+                <p class="egg-text">Worth it.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('SW registered:', reg.scope))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>
