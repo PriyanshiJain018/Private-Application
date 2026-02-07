@@ -1184,6 +1184,9 @@ body {
 .valentine-mode .finale,
 .valentine-mode .gift-screen {
     text-align: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 420px;
 }
 
 .heart-icon {
@@ -1260,13 +1263,33 @@ body {
     box-shadow: 0 8px 32px rgba(232, 100, 120, 0.4);
 }
 
-.secret-no {
+/* Runaway No Button */
+.runaway-no {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 28px;
     background: transparent;
-    border: none;
-    color: rgba(0, 0, 0, 0.05);
-    font-size: 8px;
-    margin-top: 24px;
-    cursor: default;
+    border: 1.5px solid rgba(232, 100, 120, 0.25);
+    border-radius: 50px;
+    color: #9a7a80;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    margin-top: 4px;
+    position: relative;
+}
+
+.runaway-no:hover {
+    border-color: rgba(232, 100, 120, 0.4);
+    color: #d4566e;
+}
+
+.runaway-no.fleeing {
+    transition: all 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: auto;
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 8px 16px;
 }
 
 /* ================================
