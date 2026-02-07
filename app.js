@@ -253,7 +253,9 @@ const state = {
     thisOrThatTimer: null,
     thisOrThatTimeLeft: 5,
     idleTimer: null,
-    scratchRevealed: false
+    scratchRevealed: false,
+    noButtonAttempts: 0,
+    noButtonGone: false
 };
 
 const KONAMI_CODE = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
@@ -1257,9 +1259,8 @@ function getAskScreen() {
             <div class="ask-buttons" id="ask-buttons" style="opacity: 0; pointer-events: none;">
                 <button class="yes-btn" onclick="handleYes('Yes')">Yes</button>
                 <button class="yes-btn confident" onclick="handleYes('Yes, absolutely')">Yes, absolutely</button>
+                <button class="runaway-no" id="runaway-no" onclick="handleRunawayNo(event)">No</button>
             </div>
-            
-            <button class="secret-no" onclick="handleSecretNo()">·</button>
         </div>
     `;
 }
@@ -1367,11 +1368,72 @@ function handleYes(answer) {
     transitionTo(SCREENS.FINALE);
 }
 
-function handleSecretNo() {
-    const errorEl = document.getElementById('ask-error');
-    errorEl.classList.remove('hidden');
+function handleRunawayNo(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (state.noButtonGone) return;
+    
+    state.noButtonAttempts++;
     haptic([50, 30, 50]);
-    setTimeout(() => errorEl.classList.add('hidden'), 2000);
+    
+    const btn = document.getElementById('runaway-no');
+    if (!btn) return;
+    
+    const messages = [
+        "No",
+        "Are you sure?",
+        "Think again...",
+        "Really?!",
+        "Stop it 😤",
+        "I'm leaving!",
+        "You can't catch me",
+        "Fine, I'll disappear",
+        "Bye forever 💨"
+    ];
+    
+    const attempt = state.noButtonAttempts;
+    
+    if (attempt >= messages.length) {
+        // Final disappearance
+        btn.style.transition = 'all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+        btn.style.transform = 'scale(0) rotate(720deg)';
+        btn.style.opacity = '0';
+        state.noButtonGone = true;
+        haptic(100);
+        showToast("The 'No' button has left the chat 💕");
+        setTimeout(() => btn.remove(), 600);
+        return;
+    }
+    
+    // Update text
+    btn.textContent = messages[Math.min(attempt, messages.length - 1)];
+    
+    // Shrink progressively
+    const scale = Math.max(0.5, 1 - (attempt * 0.07));
+    
+    // Calculate random position within the screen-content bounds
+    const container = btn.closest('.screen-content') || btn.closest('.ask-screen') || document.querySelector('.screen-content');
+    const containerRect = container.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    
+    const maxX = containerRect.width - btnRect.width - 20;
+    const maxY = containerRect.height - btnRect.height - 20;
+    
+    const randomX = Math.random() * maxX;
+    const randomY = Math.random() * maxY;
+    
+    // Make it flee!
+    btn.classList.add('fleeing');
+    btn.style.position = 'absolute';
+    btn.style.left = randomX + 'px';
+    btn.style.top = randomY + 'px';
+    btn.style.transform = `scale(${scale}) rotate(${(Math.random() - 0.5) * 30}deg)`;
+    btn.style.zIndex = '10';
+    
+    // Flash a taunt
+    if (attempt === 2) showToast("It's getting nervous 😏");
+    if (attempt === 5) showToast("Almost got it! ...not really 😂");
 }
 
 function getFinaleScreen() {
@@ -1511,6 +1573,11 @@ function getCreditsScreen() {
 function renderScreen() {
     resetIdleTimer();
     
+    // Save scroll position before re-render
+    const prevContent = screenWrapper.querySelector('.screen-content');
+    const savedScroll = prevContent ? prevContent.scrollTop : 0;
+    const sameScreen = screenWrapper.dataset.currentScreen == state.currentScreen;
+    
     const screens = {
         [SCREENS.LANDING]: getLandingScreen,
         [SCREENS.WARMUP]: getWarmupScreen,
@@ -1525,7 +1592,14 @@ function renderScreen() {
         [SCREENS.CREDITS]: getCreditsScreen
     };
     
+    screenWrapper.dataset.currentScreen = state.currentScreen;
     screenWrapper.innerHTML = screens[state.currentScreen]();
+    
+    // Restore scroll position if we're on the same screen
+    if (sameScreen && savedScroll > 0) {
+        const newContent = screenWrapper.querySelector('.screen-content');
+        if (newContent) newContent.scrollTop = savedScroll;
+    }
     
     // Post-render hooks
     if (state.currentScreen === SCREENS.ASK) {
