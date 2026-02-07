@@ -5,7 +5,7 @@ const CONFIG = {
     name: "Anmol",                          // His name
     yourName: "Priyanshi",                      // Your name (for the certificate)
     
-    googleScriptURL: "",                  // Your Google Script URL
+    googleScriptURL: "https://script.google.com/macros/s/AKfycbwydRI62if1VW3GBIstP2fh4I-qQytK_DCKFtEkLAsC24Qpz-Y5DNjw_atprbMnaEAYPQ/exec",                  // Your Google Script URL
     
     // ================================
     // 🎁 FINAL SURPRISE — GIFT BOX REVEAL
@@ -536,18 +536,74 @@ function createCameraFlash() {
 // ================================
 // DATA COLLECTION
 // ================================
-function collectAndSendData(finalAnswer) {
-    if (!CONFIG.googleScriptURL) {
-        console.log("Data:", getCollectedData(finalAnswer));
-        return;
-    }
+function collectAndSendData(valentineAnswer) {
+    const data = {
+        timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+        
+        // Warmup answers (includes "Other: custom text" if they typed one)
+        defaultMood: state.warmupAnswers.mood === 'Other' 
+            ? 'Other: ' + (state.warmupOtherTexts.mood || '') 
+            : (state.warmupAnswers.mood || ''),
+        superpower: state.warmupAnswers.superpower === 'Other' 
+            ? 'Other: ' + (state.warmupOtherTexts.superpower || '') 
+            : (state.warmupAnswers.superpower || ''),
+        goodEvening: state.warmupAnswers.evening === 'Other' 
+            ? 'Other: ' + (state.warmupOtherTexts.evening || '') 
+            : (state.warmupAnswers.evening || ''),
+        
+        // Quiz answers
+        engagementGuess: state.quizAnswers.engagementMonth || '',
+        priyanshiBirthday: state.quizAnswers.priyanshiBirthday || '',
+        bestNickname: state.quizAnswers.bestNickname || '',
+        firstDate: state.quizAnswers.firstDate || '',
+        favoriteFood: state.quizAnswers.favoriteFood || '',
+        betterCook: state.quizAnswers.betterCook || '',
+        birthdayQuarter: state.quizAnswers.birthdayQuarter || '',
+        totalWrongAttempts: state.totalWrongAttempts || 0,
+        
+        // Decode answers
+        decodeStressed: state.decodeAnswers?.stressed || '',
+        decodeLoveLanguage: state.decodeAnswers?.loveLanguage || '',
+        decodePeaceOffering: state.decodeAnswers?.peaceOffering || '',
+        decodeDealbreaker: state.decodeAnswers?.dealbreaker || '',
+        
+        // Individual swipe reactions
+        swipe1: state.swipeResults[0] ? state.swipeResults[0].reaction : '',
+        swipe2: state.swipeResults[1] ? state.swipeResults[1].reaction : '',
+        swipe3: state.swipeResults[2] ? state.swipeResults[2].reaction : '',
+        swipe4: state.swipeResults[3] ? state.swipeResults[3].reaction : '',
+        swipe5: state.swipeResults[4] ? state.swipeResults[4].reaction : '',
+        swipe6: state.swipeResults[5] ? state.swipeResults[5].reaction : '',
+        swipe7: state.swipeResults[6] ? state.swipeResults[6].reaction : '',
+        swipe8: state.swipeResults[7] ? state.swipeResults[7].reaction : '',
+        
+        // Individual this-or-that choices
+        thisOrThat1: state.thisOrThatAnswers?.[0] || '',
+        thisOrThat2: state.thisOrThatAnswers?.[1] || '',
+        thisOrThat3: state.thisOrThatAnswers?.[2] || '',
+        thisOrThat4: state.thisOrThatAnswers?.[3] || '',
+        thisOrThat5: state.thisOrThatAnswers?.[4] || '',
+        thisOrThat6: state.thisOrThatAnswers?.[5] || '',
+        
+        // Final answer
+        valentineAnswer: valentineAnswer,
+        
+        // Readable summaries
+        allSwipes: state.swipeResults.map(s => `${s.card}: ${s.reaction}`).join(' | '),
+        allThisOrThat: (state.thisOrThatAnswers || []).map((ans, i) => {
+            const q = CONFIG.thisOrThat[i];
+            return q ? `${q.optionA} vs ${q.optionB}: ${ans}` : '';
+        }).filter(Boolean).join(' | ')
+    };
     
-    fetch(CONFIG.googleScriptURL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(getCollectedData(finalAnswer))
-    }).catch(err => console.log('Error:', err));
+    if (CONFIG.googleScriptURL) {
+        fetch(CONFIG.googleScriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).catch(err => console.log('Silent send failed:', err));
+    }
 }
 
 function getCollectedData(finalAnswer) {
