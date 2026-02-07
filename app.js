@@ -14,7 +14,7 @@ const CONFIG = {
     giftBox: {
         // Add a photo of you two! (put the image file in same folder, or use a URL)
         // Leave empty "" for no photo (will show emoji instead)
-        photoURL: "",  // e.g., "our-photo.jpg" or "https://i.imgur.com/xxx.jpg"
+        photoURL: "our-photo.jpg",  // e.g., "our-photo.jpg" or "https://i.imgur.com/xxx.jpg"
         
         // Your personal message that appears with the photo
         message: `Jodi toh jhakkas dikh rahi hai
