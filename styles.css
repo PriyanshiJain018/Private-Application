@@ -24,7 +24,8 @@ body {
     justify-content: center;
     padding: 24px;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     transition: background 0.8s ease;
 }
 
@@ -1185,7 +1186,8 @@ body {
 .valentine-mode .gift-screen {
     text-align: center;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     min-height: 420px;
 }
 
